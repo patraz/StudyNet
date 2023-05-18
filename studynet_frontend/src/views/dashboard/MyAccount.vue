@@ -1,5 +1,4 @@
 <template>
-  
     <div class="about">
       <div class="hero is-info is-medium">
         <div class="hero-body has-text-centered">
@@ -17,9 +16,14 @@ import axios from 'axios'
 
 export default {
     methods: {
-        logout() {
+        async logout() {
             console.log('logout')
-
+            await axios
+              .post('/api/v1/token/logout/')
+              .then(response => {
+                console.log("logged out")
+              })
+              
             axios.defaults.headers.common['Authorization'] = ""
 
             localStorage.removeItem('token')
