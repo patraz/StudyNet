@@ -6,7 +6,7 @@ import LogIn from '../views/LogIn.vue'
 
 import Courses from '../views/Courses.vue'
 import MyAccount from '../views/dashboard/MyAccount.vue'
-
+import Course from '../views/Course.vue'
 const routes = [
   {
     path: '/',
@@ -34,10 +34,16 @@ const routes = [
     component: Courses
   },
   {
+    path:'/courses/:slug',
+    name:'Course',
+    component: Course
+  },
+  {
     path:'/dashboard/my-account',
     name:'MyAccount',
     component: MyAccount
-  }
+  },
+
 ]
 
 const router = createRouter({
