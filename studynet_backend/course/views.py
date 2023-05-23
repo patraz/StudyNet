@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer
-from .models import Course, Lesson
+from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentSerializer
+from .models import Course, Lesson, Comment
 
 
 # Create your views here.
@@ -24,7 +24,23 @@ def get_course(request, slug):
         'course': course_serializer.data,
         'lessons': lesson_serializer.data
     }
-
     return Response(data)
 
+@api_view(['POST'])
+def add_comment(request, course_slug, lesson_slug):
+    data = request.data
+    name = data.get('name')
+    content = data.get('content')
 
+    course = Course.objects.get(slug=course_slug)
+    lesson = Lesson.objects.get(slug=lesson_slug)
+
+    comment = Comment.objects.create(course=course, lesson=lesson, name=name, content=content, created_by = request.user)
+
+    return Response({'message':'The comment was added!'})
+
+@api_view(['GET'])
+def get_comments(request, course_slug, lesson_slug):
+    lesson = Lesson.objects.get(slug=lesson_slug)
+    comment_serializer = CommentSerializer(lesson.comments.all(), many= True)
+    return Response(comment_serializer.data)
