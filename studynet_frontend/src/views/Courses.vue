@@ -16,9 +16,18 @@
                         <p class="menu-label">Categories</p>
 
                         <ul class="menu-list">
-                            <li><a href="">All cournses</a></li>
-                            <li><a href="">Programming</a></li>
-                            <li><a href="">Design</a></li>
+                            <li><a 
+                                v-bind:class="{'is-active': !activeCategory}"
+                                @click="setActiveCategory(null)"
+
+                                >
+                                All courses
+                            </a></li>
+                            <li 
+                            v-for="category in categories" 
+                            v-bind:key="category.id" 
+                            @click="setActiveCategory(category)"
+                            ><a>{{ category.title }}</a></li>
                         </ul>
                     </aside>
                 </div>
@@ -30,25 +39,8 @@
                             class="column is-4"
                             v-for="course in courses"
                             v-bind:key="course.id"
-                            >
-                            <div class="card">
-                                <div class="card-image">
-                                    <figure class="image is-4by3">
-                                        <img src="http://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-                                    </figure>
-                                </div>
-                                <div class="card-content">
-                                    <div class="media">
-                                        <div class="media-content">
-                                            <p class="is-size-5">{{ course.title }}</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="content">
-                                        <p>{{ course.short_description }}</p>
-                                        <router-link :to="{name:'Course', params: {slug: course.slug}}">More info</router-link>                           </div>
-                                </div>
-                            </div>
+                        >
+                        <CourseItem :course="course"/>
                         </div>
 
                         
@@ -74,24 +66,56 @@
 </template>
 
 <script>
-import axios from 'axios'
 
+import axios from 'axios'
+import CourseItem from '@/components/CourseItem.vue'
 
 export default {
     data() {
         return {
-            courses: []
+            courses: [],
+            categories: [],
+            activeCategory: null,
         }
     },
-    mounted() {
+    methods: {
+        setActiveCategory(category){
+            console.log(category)
+            this.activeCategory = category
+
+
+            this.getCourses()
+        },
+        getCourses(){
+            let url = '/api/v1/courses/'
+            if (this.activeCategory) {
+                url += '?category_id=' + this.activeCategory.id
+            }
+
+            axios
+                .get(url)
+                .then(response => {
+                    console.log(response.data)
+                    this.courses = response.data
+                })
+
+        }
+
+    },
+    components: {
+        CourseItem,
+    },
+    async mounted() {
         console.log('mounted')
 
-        axios
-            .get('/api/v1/courses/')
+        await axios
+            .get('/api/v1/courses/get_categories/')
             .then(response => {
                 console.log(response.data)
-                this.courses = response.data
+                this.categories = response.data
             })
+
+        this.getCourses()
     }
 }
 

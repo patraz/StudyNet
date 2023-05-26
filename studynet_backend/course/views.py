@@ -2,15 +2,36 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentSerializer
-from .models import Course, Lesson, Comment
+from .serializers import CourseListSerializer, CourseDetailSerializer, LessonListSerializer, CommentSerializer, CategorySerializer
+from .models import Course, Lesson, Comment, Category
 
 
 # Create your views here.
 
 @api_view(['GET'])
+def get_categories(request):
+    categories = Category.objects.all()
+
+    
+
+    serializer = CategorySerializer(categories, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def get_courses(request):
+    category_id = request.GET.get('category_id', '')
     courses = Course.objects.all()
+
+    if category_id:
+        courses = courses.filter(categories__in=[int(category_id)])
+
+    serializer = CourseListSerializer(courses, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_frontpage_courses(request):
+    courses = Course.objects.all()[0:4]
     serializer = CourseListSerializer(courses, many=True)
     return Response(serializer.data)
 
@@ -37,10 +58,15 @@ def add_comment(request, course_slug, lesson_slug):
 
     comment = Comment.objects.create(course=course, lesson=lesson, name=name, content=content, created_by = request.user)
 
-    return Response({'message':'The comment was added!'})
+    serializer = CommentSerializer(comment)
+
+
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def get_comments(request, course_slug, lesson_slug):
     lesson = Lesson.objects.get(slug=lesson_slug)
     comment_serializer = CommentSerializer(lesson.comments.all(), many= True)
     return Response(comment_serializer.data)
+
+

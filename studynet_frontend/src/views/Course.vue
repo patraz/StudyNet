@@ -57,6 +57,15 @@
                                             <textarea class="textarea" v-model="comment.content"></textarea>
                                         </div>
                                     </div>
+
+                                    <div 
+                                        class="notification is-danger"
+                                        v-for="error in errors"
+                                        v-bind:key="error"
+                                        >
+                                        {{ error }}
+                                    </div>
+
                                     <div class="field">
                                         <div class="control">
                                             <button class="button is-link">Submit</button>
@@ -90,8 +99,9 @@ export default {
         return {
             course: {},
             lessons: [],
-            activeLesson: null,
             comments: [],
+            activeLesson: null,
+            errors: [],
             comment: {
                 name:'',
                 content:''
@@ -114,16 +124,29 @@ export default {
     methods: {
         submitComment() {
             console.log('logout')
-            axios
-                .post(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
-                .then(response => {
-                    this.comment.name = ''
-                    this.comment.content = ''
-                    alert('The comment was added')
-                })
-                .catch(error => {
-                    console.log(error)
-                })
+
+            this.errors = [];
+
+            if (this.comment.name === '') {
+                this.errors.push('The name must be filled out')
+            }
+            if (this.comment.content === '') {
+                this.errors.push('The content must be filled out')
+            } 
+            
+            if (!this.errors.length){
+                axios
+                    .post(`/api/v1/courses/${this.course.slug}/${this.activeLesson.slug}/`, this.comment)
+                    .then(response => {
+                        this.comment.name = ''
+                        this.comment.content = ''
+                        this.comments.push(response.data)
+                        alert('The comment was added')
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            }
         },
         setActiveLesson(lesson) {
             this.activeLesson = lesson
