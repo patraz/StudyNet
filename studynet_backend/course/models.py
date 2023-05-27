@@ -11,6 +11,9 @@ class Category(models.Model):
     short_description = models.TextField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
     
+    class Meta:
+        verbose_name_plural = 'Categories'
+    
     def __str__(self):
         return self.title
 
@@ -22,6 +25,7 @@ class Course(models.Model):
     long_description = models.TextField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
     image = models.ImageField(upload_to='uploads', blank=True, null=True)
+
 
     def __str__(self):
         return self.title
