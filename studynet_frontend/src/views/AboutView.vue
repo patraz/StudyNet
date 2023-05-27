@@ -11,3 +11,12 @@
     </section>
   </div>
 </template>
+
+
+<script>
+export default {
+  mounted() {
+    document.title = 'About Page | StudyNet'
+  }
+}
+</script>

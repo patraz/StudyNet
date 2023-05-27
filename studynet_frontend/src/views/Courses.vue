@@ -116,6 +116,7 @@ export default {
             })
 
         this.getCourses()
+        document.title = 'Courses | StudyNet'
     }
 }
 

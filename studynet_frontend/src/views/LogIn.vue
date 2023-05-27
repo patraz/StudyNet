@@ -61,6 +61,9 @@ export default {
             errors: []
         }
     },
+    mounted(){
+        document.title = 'Login | StudyNet'
+    },
     methods: {
         submitForm() {
             console.log('submitForm')

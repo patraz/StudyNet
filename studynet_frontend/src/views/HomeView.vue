@@ -77,6 +77,9 @@ export default {
                 console.log(response.data)
                 this.courses = response.data
             })
+
+        document.title = 'Welcome | StudyNet'
+
     }
 
 }
