@@ -10,7 +10,7 @@ class Category(models.Model):
     slug = models.SlugField()
     short_description = models.TextField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
-    
+
     class Meta:
         verbose_name_plural = 'Categories'
     
@@ -59,7 +59,7 @@ class Lesson(models.Model):
     short_description = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=CHOICES_STATUS, default=PUBLISHED)
-    lsson_type = models.CharField(max_length=20, choices=CHOICES_LESSON_TYPE, default=ARTICLE)
+    lesson_type = models.CharField(max_length=20, choices=CHOICES_LESSON_TYPE, default=ARTICLE)
 
 class Comment(models.Model):
     course = models.ForeignKey("Course", related_name='comments', on_delete=models.CASCADE)
